@@ -17,6 +17,9 @@ const messageManager = new MessageManager();
 const MongoStore = require('connect-mongo');
 const { viewsRouter } = require('./src/routes/views.routes.js');
 const { sessionsRouter } = require('./src/routes/sessions.routes.js');
+const bcrypt = require('bcrypt');
+const passport = require('passport');
+const { initializePassport } = require('./src/config/passport.config.js');
 
 const app = express();
 const port = 8080;
@@ -59,6 +62,12 @@ app.use(session({
     resave: true,
     saveUninitialized: true
 }));
+
+// Passport
+
+initializePassport();
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Socket IO
 

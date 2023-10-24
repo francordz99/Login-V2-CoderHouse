@@ -38,8 +38,9 @@ router.get("/login", (req, res) => {
 });
 
 router.get("/profile", (req, res) => {
-    if (req.session.email) {
-        const userEmail = req.session.email;
+    console.log(req.user);
+    if (req.user.email) {
+        const userEmail = req.user.email;
         res.render("profile", { userEmail });
     }
     else {
