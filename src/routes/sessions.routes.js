@@ -2,11 +2,20 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const passport = require('passport');
+const { config } = require('../config/config');
 
 router.post("/register", passport.authenticate("signupLocalStrategy", {
     failureRedirect: "/failed-signup"
 }), async (req, res) => {
     res.render("login", { message: "Usuario Registrado Correctamente" });
+});
+
+router.get("/signup-github", passport.authenticate("signupGithubStrategy"));
+
+router.get(config.github.callbackUrl, passport.authenticate("signupGithubStrategy", {
+    failureRedirect: "/api/sessions/fail-signup"
+}), (req, res) => {
+    res.redirect("/");
 });
 
 router.get("/fail-signup", (req, res) => {

@@ -20,6 +20,7 @@ const { sessionsRouter } = require('./src/routes/sessions.routes.js');
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 const { initializePassport } = require('./src/config/passport.config.js');
+const { config } = require('./src/config/config.js');
 
 const app = express();
 const port = 8080;
@@ -55,10 +56,10 @@ const fileStorage = FileStore(session);
 app.use(session({
     store: MongoStore.create({
         ttl: 60,
-        mongoUrl: "mongodb+srv://testrdz32:z0n3T7msJnV2nKLA@clusterbackend.unryogc.mongodb.net/ecommerce?retryWrites=true&w=majority",
+        mongoUrl: config.mongo.url,
         retries: 0,
     }),
-    secret: "claveSecretaSesion",
+    secret: config.server.secretSession,
     resave: true,
     saveUninitialized: true
 }));

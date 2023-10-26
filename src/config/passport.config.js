@@ -1,6 +1,8 @@
 const passport = require('passport');
 const localStrategy = require('passport-local');
 const bcrypt = require('bcrypt');
+const GithubStrategy = require('passport-github2');
+const { config } = require('../config/config');
 const { usersModel } = require('../../dao/models/usersModel.js');
 
 const createHash = (password) => {
@@ -65,6 +67,38 @@ const initializePassport = () => {
         }
     })
     );
+
+    passport.use("signupGithubStrategy", new GithubStrategy(
+        {
+
+            clientID: config.github.clientId,
+
+            clientSecret: config.github.clientSecret,
+
+            callbackURL: `http://localhost:8080/api/sessions${config.github.callbackUrl}`
+
+        },
+        async (accessToken, refreshToken, profile, done) => {
+            try {
+                console.log("profile", profile);
+                const user = await usersModel.findOne({ email: profile.username });
+                if (user) {
+                    // Usuario preexistente
+                    return done(null, user);
+                }
+                const newUser = new usersModel({
+                    nombre: profile._json.name,
+                    email: profile.username,
+                    contrasena: createHash(profile.id), // Asegúrate de que el campo se llame "contrasena" o cambia esto
+                });
+                console.log(newUser);
+                await newUser.save(); // Guardar el nuevo usuario en la base de datos
+                return done(null, newUser);
+            } catch (error) {
+                return done(error);
+            };
+        }
+    ));
 
 };
 
