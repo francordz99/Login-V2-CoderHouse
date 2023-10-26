@@ -29,10 +29,10 @@ const initializePassport = () => {
             const newUser = new usersModel({
                 nombre,
                 email: username,
-                contrasena: createHash(password), // Asegúrate de que el campo se llame "contrasena" o cambia esto
+                contrasena: createHash(password),
             });
             console.log(newUser);
-            await newUser.save(); // Guardar el nuevo usuario en la base de datos
+            await newUser.save();
             return done(null, newUser);
         } catch (error) {
             return done(error);
@@ -83,16 +83,15 @@ const initializePassport = () => {
                 console.log("profile", profile);
                 const user = await usersModel.findOne({ email: profile.username });
                 if (user) {
-                    // Usuario preexistente
                     return done(null, user);
                 }
                 const newUser = new usersModel({
                     nombre: profile._json.name,
                     email: profile.username,
-                    contrasena: createHash(profile.id), // Asegúrate de que el campo se llame "contrasena" o cambia esto
+                    contrasena: createHash(profile.id),
                 });
                 console.log(newUser);
-                await newUser.save(); // Guardar el nuevo usuario en la base de datos
+                await newUser.save();
                 return done(null, newUser);
             } catch (error) {
                 return done(error);
